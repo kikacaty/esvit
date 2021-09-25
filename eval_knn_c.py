@@ -196,7 +196,7 @@ def extract_feature_c_pipeline(args, c, s):
         pin_memory=True,
         drop_last=False,
     )
-    print(f"Data loaded with {len(dataset_train)} train and {len(dataset_val)} val imgs.")
+    print(f"Data loaded with {len(dataset_val)} val imgs.")
 
     # ============ building network ... ============
 
@@ -361,6 +361,8 @@ if __name__ == '__main__':
         help='Path where to save computed features, empty for no saving')
     parser.add_argument('--load_features', default=None, help="""If the features have
         already been computed, where to find them.""")
+    parser.add_argument('--log_dir', default=None,
+        help='Path where to save the final results')
     parser.add_argument('--num_workers', default=10, type=int, help='Number of data loading workers per GPU.')
     parser.add_argument("--dist_url", default="env://", type=str, help="""url used to set up
         distributed training; see https://pytorch.org/docs/stable/distributed.html""")
@@ -425,6 +427,8 @@ if __name__ == '__main__':
                     log_stats[k] = [top1, top5] 
 
                 if utils.is_main_process():
-                    with ("results/knn_c_{}_log.txt".format(args.arch)).open("a") as f:
+                    if not os.path.exists(args.log_dir):
+                        os.makedirs(args.log_dir)  
+                    with (Path(args.log_dir) / "log.txt").open("a") as f:
                         f.write(json.dumps(log_stats) + "\n")
     dist.barrier()
