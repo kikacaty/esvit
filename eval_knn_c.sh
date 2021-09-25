@@ -9,7 +9,7 @@ ARCH=$2
 
 CUDA_VISIBLE_DEVICES=3 python -m torch.distributed.launch --nproc_per_node=1 eval_knn_c.py --data_path $DATA_PATH \
                             --dump_features $OUT_PATH/$ARCH/features --pretrained_weights $CKPT_PATH \
-                            --log_dir $OUT_PATH/$ARCH/knn_c
+                            --log_dir $OUT_PATH/$ARCH/knn_c \
                             --checkpoint_key teacher --batch_size_per_gpu 256 --arch $ARCH \
-                            --cfg experiments/imagenet/swin/swin_tiny_patch4_window7_224.yaml MODEL.NUM_CLASSES 0\
+                            --cfg experiments/imagenet/swin/swin_tiny_patch4_window7_224.yaml MODEL.NUM_CLASSES 0 \
                             --load_features exp_output/swin_tiny/features
