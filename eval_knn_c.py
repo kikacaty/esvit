@@ -203,17 +203,17 @@ def extract_feature_c_pipeline(args, c, s):
 
     # if the network is a 4-stage vision transformer (i.e. swin)
     if 'swin' in args.arch :
-        update_config(config, args)
+        # update_config(config, args)
         model = build_model(config, is_teacher=True)
 
     # if the network is a 4-stage vision transformer (i.e. longformer)
     elif 'vil' in args.arch :
-        update_config(config, args)
+        # update_config(config, args)
         model = build_model(config, is_teacher=True)
 
     # if the network is a 4-stage vision transformer (i.e. CvT)
     elif 'cvt' in args.arch :
-        update_config(config, args)
+        # update_config(config, args)
         model = build_model(config, is_teacher=True)
 
     # if the network is a vision transformer (i.e. deit_tiny, deit_small, vit_base)
