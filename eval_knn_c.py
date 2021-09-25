@@ -359,7 +359,8 @@ if __name__ == '__main__':
         help='Key to use in the checkpoint (example: "teacher")')
     parser.add_argument('--dump_features', default=None,
         help='Path where to save computed features, empty for no saving')
-    parser.add_argument('--load_features', default=None, help="""If the features have already been computed, where to find them.""")
+    parser.add_argument('--load_features', default=None,
+        help='If the features have already been computed, where to find them.')
     parser.add_argument('--log_dir', default=None,
         help='Path where to save the final results')
     parser.add_argument('--num_workers', default=10, type=int, help='Number of data loading workers per GPU.')
