@@ -406,6 +406,28 @@ if __name__ == '__main__':
         # need to extract features !
         train_features, test_features, train_labels, test_labels = extract_feature_pipeline(args)
 
+    if utils.get_rank() == 0:
+        if args.use_cuda:
+            train_features = train_features.cuda()
+            test_features = test_features.cuda()
+            train_labels = train_labels.cuda()
+            test_labels = test_labels.cuda()
+
+        print("Features are ready!\nStart the k-NN classification.")
+
+        log_stats = {}
+        for k in args.nb_knn:
+            top1, top5 = knn_classifier(train_features, train_labels,
+                test_features, test_labels, k, args.temperature)
+            print(f"Baseline: {k}-NN classifier result: Top1: {top1}, Top5: {top5}")
+            log_stats[k] = [top1, top5] 
+
+        if utils.is_main_process():
+            if not os.path.exists(args.log_dir):
+                os.makedirs(args.log_dir)  
+            with (Path(args.log_dir) / "log.txt").open("a") as f:
+                f.write(json.dumps(log_stats) + "\n")
+
     setup_model = False
 
     for c in CORRUPTIONS:
@@ -429,7 +451,7 @@ if __name__ == '__main__':
                 for k in args.nb_knn:
                     top1, top5 = knn_classifier(train_features, train_labels,
                         test_features, test_labels, k, args.temperature)
-                    print(f"{k}-NN classifier result: Top1: {top1}, Top5: {top5}")
+                    print(f"Imagenet-c: {k}-NN classifier result: Top1: {top1}, Top5: {top5}")
                     log_stats[k] = [top1, top5] 
 
                 if utils.is_main_process():
