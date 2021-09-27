@@ -144,7 +144,7 @@ def extract_feature_pipeline(args):
         torch.save(test_labels.cpu(), os.path.join(args.dump_features, "testlabels.pth"))
     return train_features, test_features, train_labels, test_labels
 
-def extract_feature_c_pipeline(args, c, s):
+def extract_feature_c_pipeline(args, c, s, setup_model):
     # ============ preparing data ... ============
     transform = pth_transforms.Compose([
         pth_transforms.Resize(256, interpolation=3),
@@ -200,6 +200,9 @@ def extract_feature_c_pipeline(args, c, s):
 
     # ============ building network ... ============
 
+
+    if not setup_model:
+        update_config(config, args)
 
     # if the network is a 4-stage vision transformer (i.e. swin)
     if 'swin' in args.arch :
@@ -403,12 +406,15 @@ if __name__ == '__main__':
         # need to extract features !
         train_features, test_features, train_labels, test_labels = extract_feature_pipeline(args)
 
+    setup_model = False
+
     for c in CORRUPTIONS:
         print(c)
         for s in range(1, 6):
             print('s={}'.format(s))
 
-            test_features, test_labels = extract_feature_c_pipeline(args,c,s)
+            test_features, test_labels = extract_feature_c_pipeline(args,c,s,setup_model)
+            setup_model = True
 
             if utils.get_rank() == 0:
                 if args.use_cuda:
